@@ -6,8 +6,4 @@ export class ConfigService {
     get sequelizeConfig() {
         return config.database;
     }
-
-    get jwtConfig() {
-        return { privateKey: config.jwtPrivateKey };
-    }
 }

@@ -9,6 +9,5 @@ export const config = {
         password: 'world',
         database: 'papa',
         logging: false,
-    },
-    jwtPrivateKey: 'secret',
+    }
 };
