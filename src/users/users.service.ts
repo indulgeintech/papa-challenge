@@ -44,6 +44,7 @@ export class UsersService {
             user.email = createUserDto.email.trim().toLowerCase();
             user.firstName = createUserDto.firstName;
             user.lastName = createUserDto.lastName;
+            user.role = createUserDto.role;
         //@TODO: refactor to seperate util
         try{
             const salt = await genSalt(10);

@@ -1,6 +1,11 @@
 import { User } from './../user.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsEnum } from 'class-validator';
 
+export enum Role {
+  member='member',
+  pal='pal'
+}
 export class UserDto {
     @ApiProperty({
         description: `user id uuidv4`,
@@ -26,10 +31,15 @@ export class UserDto {
       })
     readonly lastName: string;
 
+    @ApiProperty()
+    @IsEnum(Role)
+    readonly role: Role;
+
     constructor(user: User) {
         this.id = user.id;
         this.email = user.email;
         this.firstName = user.firstName;
         this.lastName = user.lastName;
+        this.role = user.role;
     }
 }

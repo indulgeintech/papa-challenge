@@ -7,16 +7,19 @@ import {
   DataType,
   CreatedAt,
   UpdatedAt,
+  BelongsToMany,
 } from 'sequelize-typescript';
+import { Visit, Transaction } from '../visits/entity/';
+import { Role } from './dtos/user.dto';
 
 @Table({
   tableName: 'user',
 })
 export class User extends Model<User> {
   @Column({
-      type: DataType.UUID,
-      defaultValue: DataType.UUIDV4,
-      primaryKey: true,
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
+    primaryKey: true,
   })
   id: string;
 
@@ -41,4 +44,7 @@ export class User extends Model<User> {
   @UpdatedAt
   @Column({ field: 'updated_at' })
   updatedAt: Date;
+
+  @Column({ type: DataType.ENUM(Role.member, Role.pal) })
+  role: Role
 }
