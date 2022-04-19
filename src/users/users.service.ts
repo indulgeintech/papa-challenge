@@ -1,17 +1,31 @@
 import { Injectable, Inject, HttpException, HttpStatus, Logger } from '@nestjs/common';
-import { genSalt, hash } from 'bcrypt';
+import { compare, genSalt, hash } from 'bcrypt';
+import { sign } from 'jsonwebtoken';
 import { User } from './user.entity';
 import { UserDto } from './dtos/user.dto';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { ConfigService } from '../config/config.service';
+import { UserLoginRequestDto, UserLoginResponseDto } from './dtos/user-login.dto';
+import { Jwt } from '../auth/jwt.model';
+import { UpdateUserDto } from './dtos/update-user.dto';
 
 @Injectable()
 export class UsersService {
+    private readonly jwtPrivateKey: string;
+
     constructor(
         @Inject('UsersRepository')
         private readonly usersRepository: typeof User,
         private readonly configService: ConfigService,
     ) {
+        this.jwtPrivateKey = this.configService.jwtConfig.privateKey;
+    }
+
+    private async signToken(user: User) {
+        const payload: Jwt = {
+            email: user.email,
+        };
+        return sign(payload, this.jwtPrivateKey, {});
     }
 
     async findAll() {
@@ -31,15 +45,14 @@ export class UsersService {
         return userWire;
     }
 
-    async getUserByEmail(email: string):Promise<UserDto> {
+    async getUserByEmail(email: string):Promise<User> {
         const userDB = await this.usersRepository.findOne<User>({
             where: { email },
         });
-        const userWire = new UserDto(userDB);
-        return userWire;
+        return userDB;
     }
 
-    async create(createUserDto: CreateUserDto):Promise<UserDto> {
+    async create(createUserDto: CreateUserDto):Promise<UserLoginResponseDto> {
             const user = new User();
             user.email = createUserDto.email.trim().toLowerCase();
             user.firstName = createUserDto.firstName;
@@ -55,8 +68,9 @@ export class UsersService {
         }
         try {
             const userDB = await user.save();
-            const userWire = new UserDto(userDB);
-            return userWire;
+             // when registering then log user in automatically by returning a token
+             const token = await this.signToken(userDB);
+             return new UserLoginResponseDto(userDB, token);
         } catch (err) {
             if (err.original.constraint === 'user_email_key') {
                 Logger.error(err, '[User Create] error user already exsits')
@@ -66,6 +80,50 @@ export class UsersService {
                 );
             }
             Logger.error(err,'[User Create] internal server error saving the user')
+            throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    async login(userLoginRequestDto: UserLoginRequestDto) {
+        const email = userLoginRequestDto.email;
+        const password = userLoginRequestDto.password;
+
+        const user = await this.getUserByEmail(email);
+        if (!user) {
+            throw new HttpException(
+                'Invalid email or password.',
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
+        const isMatch = await compare(password, user.password);
+        if (!isMatch) {
+            throw new HttpException(
+                'Invalid email or password.',
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
+        const token = await this.signToken(user);
+        return new UserLoginResponseDto(user, token);
+    }
+
+    async update(id: string, updateUserDto: UpdateUserDto) {
+        const user = await this.usersRepository.findByPk<User>(id);
+        if (!user) {
+            throw new HttpException('User not found.', HttpStatus.NOT_FOUND);
+        }
+
+        user.firstName = updateUserDto.firstName || user.firstName;
+        user.lastName = updateUserDto.lastName || user.lastName;
+        user.email = updateUserDto.email || user.email;
+        user.password = updateUserDto.password || user.password;
+        user.role = updateUserDto.role || user.role;
+
+        try {
+            const data = await user.save();
+            return new UserDto(data);
+        } catch (err) {
             throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

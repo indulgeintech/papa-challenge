@@ -9,5 +9,6 @@ export const config = {
         password: process.env.DB_PASSWORD || '',
         database: process.env.DB_DATABASE || 'postgres',
         logging: false,
-    }
+    },
+    jwtPrivateKey: 'jwtPrivateKey',
 };

@@ -10,4 +10,5 @@ export const config = {
         database: process.env.DB_DATABASE,
         logging: false,
     },
+    jwtPrivateKey: process.env.JWT_PRIVATE_KEY,
 };

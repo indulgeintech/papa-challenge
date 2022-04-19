@@ -1,6 +1,9 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { Body, Controller, Get, HttpCode, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateUserDto } from './dtos/create-user.dto';
+import { UpdateUserDto } from './dtos/update-user.dto';
+import { UserLoginRequestDto, UserLoginResponseDto } from './dtos/user-login.dto';
 import { UserDto } from './dtos/user.dto';
 import { UsersService } from './users.service';
 
@@ -9,12 +12,22 @@ import { UsersService } from './users.service';
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 
-    @Post('')
-    @ApiOkResponse({ type: UserDto })
+    @Post('register')
+    @ApiOkResponse({ type: UserLoginResponseDto })
     register(
         @Body() createUserDto: CreateUserDto,
-    ): Promise<UserDto> {
+    ): Promise<UserLoginResponseDto> {
         return this.usersService.create(createUserDto);
+    }
+
+
+    @Post('login')
+    @HttpCode(200)
+    @ApiOkResponse({ type: UserLoginResponseDto })
+    login(
+        @Body() userLoginRequestDto: UserLoginRequestDto,
+    ): Promise<UserLoginResponseDto> {
+        return this.usersService.login(userLoginRequestDto);
     }
 
     @Get()
@@ -29,9 +42,29 @@ export class UsersController {
         return this.usersService.getUser(request.params.id);
     }
 
+    @Get('me')
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard('jwt'))
+    @ApiOkResponse({ type: UserDto })
+    async getUser(@Req() request): Promise<UserDto> {
+        return this.usersService.getUser(request.user.id);
+    }
+
+    @Put('me')
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard('jwt'))
+    @ApiOkResponse({ type: UserDto })
+    update(
+        @Body() updateUserDto: UpdateUserDto,
+        @Req() request,
+    ): Promise<UserDto> {
+        return this.usersService.update(request.user.id, updateUserDto);
+    }
+
     @Get('/email/:email')
     @ApiOkResponse({ type: UserDto })
     findByEmail(@Req() request): Promise<UserDto> {
         return this.usersService.getUser(request.params.email);
     }
 }
+
