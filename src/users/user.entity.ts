@@ -48,10 +48,8 @@ export class User extends Model<User> {
   @Column({ field: 'updated_at' })
   updatedAt: Date;
 
-  @Column({ type: DataType.ENUM(Role.member, Role.pal) })
-  role: Role;
-
-
+  @Column({ type: DataType.ARRAY(DataType.ENUM(Role.member, Role.pal)) })
+  role: Role[];
 
   @HasMany(() => Visit)
     posts: Visit[];

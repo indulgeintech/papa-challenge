@@ -33,7 +33,7 @@ export class UserDto {
 
   @ApiProperty()
   @IsEnum(Role)
-  readonly role: Role;
+  readonly role: Role[];
 
   @ApiProperty({
     description: `user's balance in time mins`,

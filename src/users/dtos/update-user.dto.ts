@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsOptional, IsString, IsEmail, MinLength, IsEnum } from "class-validator";
+import { IsOptional, IsString, IsEmail, MinLength, IsEnum, IsNumber } from "class-validator";
 import { Role } from "./user.dto";
 
 export class UpdateUserDto {
@@ -21,6 +21,13 @@ export class UpdateUserDto {
     readonly email: string;
 
     @ApiProperty({
+      description: `user's balance in time mins`,
+      example: '60mins',
+    })
+    @IsNumber()
+    readonly balance: number;
+
+    @ApiProperty({
         description: `The user's password min length 6`,
         example: 'password'
       })
@@ -30,5 +37,5 @@ export class UpdateUserDto {
 
     @ApiProperty()
     @IsEnum(Role)
-    readonly role: Role;
+    readonly role: Role[];
 }

@@ -39,5 +39,5 @@ export class CreateUserDto {
 
     @ApiProperty()
     @IsEnum(Role)
-    readonly role: Role;
+    readonly role: Role[];
 }

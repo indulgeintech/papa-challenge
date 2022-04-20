@@ -16,6 +16,8 @@ export class UsersService {
     constructor(
         @Inject('UsersRepository')
         private readonly usersRepository: typeof User,
+        @Inject('Sequlize') 
+        private readonly sequelize: Sequelize,
         private readonly configService: ConfigService,
     ) {
         this.jwtPrivateKey = this.configService.jwtConfig.privateKey;
@@ -56,33 +58,33 @@ export class UsersService {
         return userDB;
     }
 
-    async getUserByEmail(email: string):Promise<User> {
+    async getUserByEmail(email: string): Promise<User> {
         const userDB = await this.usersRepository.findOne<User>({
             where: { email },
         });
         return userDB;
     }
 
-    async create(createUserDto: CreateUserDto):Promise<UserLoginResponseDto> {
-            const user = new User();
-            user.email = createUserDto.email.trim().toLowerCase();
-            user.firstName = createUserDto.firstName;
-            user.lastName = createUserDto.lastName;
-            user.role = createUserDto.role;
-            user.balance = 120;
+    async create(createUserDto: CreateUserDto): Promise<UserLoginResponseDto> {
+        const user = new User();
+        user.email = createUserDto.email.trim().toLowerCase();
+        user.firstName = createUserDto.firstName;
+        user.lastName = createUserDto.lastName;
+        user.role = createUserDto.role;
+        user.balance = 120;
         //@TODO: refactor to seperate util
-        try{
+        try {
             const salt = await genSalt(10);
             user.password = await hash(createUserDto.password, salt);
-        } catch(err){
+        } catch (err) {
             Logger.error(err, '[User Create] error creating password hash on')
             throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         try {
             const userDB = await user.save();
-             // when registering then log user in automatically by returning a token
-             const token = await this.signToken(userDB);
-             return new UserLoginResponseDto(userDB, token);
+            // when registering then log user in automatically by returning a token
+            const token = await this.signToken(userDB);
+            return new UserLoginResponseDto(userDB, token);
         } catch (err) {
             if (err.original.constraint === 'user_email_key') {
                 Logger.error(err, '[User Create] error user already exsits')
@@ -91,7 +93,7 @@ export class UsersService {
                     HttpStatus.CONFLICT,
                 );
             }
-            Logger.error(err,'[User Create] internal server error saving the user')
+            Logger.error(err, '[User Create] internal server error saving the user')
             throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -131,12 +133,30 @@ export class UsersService {
         user.email = updateUserDto.email || user.email;
         user.password = updateUserDto.password || user.password;
         user.role = updateUserDto.role || user.role;
+        user.balance = updateUserDto.balance || user.balance;
 
         try {
             const data = await user.save();
             return new UserDto(data);
         } catch (err) {
             throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    //@todo move towards a user account service
+    async accountTransaction(member: User, pal: User):Promise<User[]> {
+        try {
+            const result = await this.sequelize.transaction(async (t) => {
+                member.save();
+                pal.save();
+            });
+            // If the execution reaches this line, the transaction has been committed successfully
+            // `result` is whatever was returned from the transaction callback (the `user`, in this case)
+            return result
+        } catch (error) {
+            // If the execution reaches this line, an error occurred.
+            // The transaction has already been rolled back automatically by Sequelize!
+            throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
