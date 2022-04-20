@@ -1,4 +1,5 @@
 import {
+    IsArray,
     IsString,
     IsEmail,
     MinLength,
@@ -6,6 +7,7 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Role } from './user.dto';
+import { Type } from 'class-transformer';
 
 export class CreateUserDto {
     @ApiProperty({
@@ -38,6 +40,6 @@ export class CreateUserDto {
     readonly lastName: string;
 
     @ApiProperty()
-    @IsEnum(Role)
+    @IsEnum(Role, { each: true })
     readonly role: Role[];
 }

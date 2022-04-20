@@ -1,6 +1,4 @@
 import {
-    IsArray,
-    IsDate,
     IsNumber,
     IsString,
 } from 'class-validator';

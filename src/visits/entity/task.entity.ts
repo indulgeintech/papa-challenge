@@ -45,7 +45,7 @@ import { Visit } from './visit.entity';
     updatedAt: Date;
 
     @ForeignKey(() => Visit)
-    @Column({field:'visit_id', type: DataType.UUID,})
+    @Column({field:'visit_id', type: DataType.STRING,})
     visitId: string;
   
     @BelongsTo(() => Visit)

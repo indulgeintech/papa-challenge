@@ -36,6 +36,6 @@ export class UpdateUserDto {
     readonly password: string;
 
     @ApiProperty()
-    @IsEnum(Role)
+    @IsEnum(Role, { each: true })
     readonly role: Role[];
 }

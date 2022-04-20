@@ -7,7 +7,7 @@ export const config = {
         port: Number(process.env.PORT) || 5432,
         username: process.env.DB_USER || 'frankpersonal',
         password: process.env.DB_PASSWORD || '',
-        database: process.env.DB_DATABASE || 'db_5',
+        database: process.env.DB_DATABASE || 'db_6',
         logging: false,
     },
     jwtPrivateKey: 'jwtPrivateKey',

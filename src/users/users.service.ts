@@ -8,6 +8,7 @@ import { ConfigService } from '../config/config.service';
 import { UserLoginRequestDto, UserLoginResponseDto } from './dtos/user-login.dto';
 import { Jwt } from '../auth/jwt.model';
 import { UpdateUserDto } from './dtos/update-user.dto';
+import { Sequelize } from 'sequelize-typescript';
 
 @Injectable()
 export class UsersService {
@@ -16,7 +17,7 @@ export class UsersService {
     constructor(
         @Inject('UsersRepository')
         private readonly usersRepository: typeof User,
-        @Inject('Sequlize') 
+        @Inject('SEQUELIZE') 
         private readonly sequelize: Sequelize,
         private readonly configService: ConfigService,
     ) {
@@ -149,6 +150,7 @@ export class UsersService {
             const result = await this.sequelize.transaction(async (t) => {
                 member.save();
                 pal.save();
+                return [member, pal]
             });
             // If the execution reaches this line, the transaction has been committed successfully
             // `result` is whatever was returned from the transaction callback (the `user`, in this case)

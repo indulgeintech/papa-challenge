@@ -32,7 +32,7 @@ export class UserDto {
   readonly lastName: string;
 
   @ApiProperty()
-  @IsEnum(Role)
+  @IsEnum(Role, { each: true })
   readonly role: Role[];
 
   @ApiProperty({

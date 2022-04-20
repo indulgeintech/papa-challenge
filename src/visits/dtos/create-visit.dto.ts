@@ -18,17 +18,9 @@ export class CreateVisit {
     readonly date: string;
 
     @ApiProperty({
-        description: `The number of minutes`,
-        example: 60
-    })
-    @IsNumber()
-    readonly minutes: number;
-
-    @ApiProperty({
         description: `The user's lastname`,
         example: 'hernandez'
     })
-    @Type(()=> TaskDto)
     @IsArray()
     readonly tasks: TaskDto[];
 }
