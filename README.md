@@ -18,8 +18,8 @@ this follows practices of keeping the app in
 Due to time contraints I fell short on testing which I generally would have done at the e2e and unit 
 level.
 
-Video Attach
-HomeVisits.mov
+## Video Attached of API
+[HomeVisits.mov](./HomeVisits.mov)
 
 ## Prerequisites
 -   [Node.js](https://nodejs.org/) 
@@ -39,7 +39,7 @@ $ brew install postgresql
 $ npm install
 ```
 ## Pre-Running Steps
-change src/config/configs/config.dev.ts to point to your postgres
+change [dev confgi](src/config/configs/config.dev.ts) to point to your postgres
 ```typescript
 import { Dialect } from 'sequelize/types';
 
