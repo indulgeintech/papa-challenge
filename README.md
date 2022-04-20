@@ -1,6 +1,25 @@
 <h1>Frank's Papa Challenge Submission</h1>
 
 ## Description
+### Problem statement
+<a few paragraphs describing the problem>
+"Home Visit Service" is an application needing to offer funcationality for user's (member's and pals) to create and fufill visits respectively. These home visits are requested by member a pal then fufills 
+these visits this changes the user's balance which are measured in minutes.
+
+<a few paragraphs describing how you solved it–focus on the whys here>
+The solution was created by creating a few key modules users, auth and visits 
+this follows practices of keeping the app in
+
+- the use of PostgresSQL a highly scalable featue rich SQL RDBMS 
+- the use of tranasactions for rolling back in case database errors to rollback account changes
+- NestJs a mature web framework that's typescript first
+- Swagger for creating robust api specs
+
+Due to time contraints I fell short on testing which I generally would have done at the e2e and unit 
+level.
+
+Video Attach
+HomeVisits.mov
 
 ## Prerequisites
 -   [Node.js](https://nodejs.org/) 
@@ -19,7 +38,24 @@ $ brew install postgresql
 ```bash
 $ npm install
 ```
+## Pre-Running Steps
+change src/config/configs/config.dev.ts to point to your postgres
+```typescript
+import { Dialect } from 'sequelize/types';
 
+export const config = {
+    database: {
+        dialect: 'postgres' as Dialect,
+        host:  process.env.DB_HOST || 'localhost',
+        port: Number(process.env.PORT) || 5432,
+        username: process.env.DB_USER || 'frankpersonal',
+        password: process.env.DB_PASSWORD || '',
+        database: process.env.DB_DATABASE || 'db_6',
+        logging: false,
+    },
+    jwtPrivateKey: 'jwtPrivateKey',
+};
+```
 ## Running the app
 
 ```bash
@@ -75,19 +111,16 @@ Using SQL will allow for advanced reporting queries something missed with no-sql
 Schema will change and expand but we can predict relatively well
 
 # API Bells & Whistles
-Auth: Simple auth token to identify clients currently no authorization settings
+Auth: Simple auth token to identify clients
 
 Documentation: Swagger, JSDOC
 
 Testing: Jest & e2e api test via swagger
 
-Logging: logger
-
 Validator: validator library to validate data at run time
-
-Seed Scripts: to dynamically load the data
 
 Middleware: Token / Async Wrapper for error handling middleware
 
 Documentation
 (Postman & JSDoc): Provides documentation and easy way for developers to start interfacing with application
+
