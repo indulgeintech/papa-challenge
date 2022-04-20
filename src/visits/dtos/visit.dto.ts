@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, IsEnum } from 'class-validator';
-import { Visit } from '../entity';
+import { User } from '../../users/user.entity';
+import { Task, Visit } from '../entity';
 
 export enum VisitStatus {
     requested = 'requested',
@@ -41,15 +42,26 @@ export class VisitDto {
         description: `visit's tasks`,
         example: [{
         }],
+        type: ()=>Task
     })
     @IsArray()
     @Type(()=> Task)
-    readonly task: Task[];
+    readonly tasks: Task[];
+
+    @ApiProperty({
+        description: `the member who ask for the task`,
+        example: 'frank@gmail.com',
+        type: ()=>User
+    })
+    @Type(()=> User)
+    readonly member: User;
 
     constructor(visit: Visit) {
         this.id = visit.id;
-        this.task = visit.tasks;
+        this.tasks = visit.tasks;
         this.date = visit.date;
         this.status = visit.status;
+        this.minutes = visit.minutes;
+        this.member = visit.member;
     }
 }

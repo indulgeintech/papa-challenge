@@ -20,7 +20,6 @@ export class UsersController {
         return this.usersService.create(createUserDto);
     }
 
-
     @Post('login')
     @HttpCode(200)
     @ApiOkResponse({ type: UserLoginResponseDto })
@@ -31,12 +30,16 @@ export class UsersController {
     }
 
     @Get()
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard('jwt'))
     @ApiOkResponse({ type: [UserDto] })
     findAll(): Promise<UserDto[]> {
         return this.usersService.findAll();
     }
 
     @Get('/:id')
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard('jwt'))
     @ApiOkResponse({ type: UserDto })
     findById(@Req() request): Promise<UserDto> {
         return this.usersService.getUser(request.params.id);
@@ -62,6 +65,8 @@ export class UsersController {
     }
 
     @Get('/email/:email')
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard('jwt'))
     @ApiOkResponse({ type: UserDto })
     findByEmail(@Req() request): Promise<UserDto> {
         return this.usersService.getUser(request.params.email);

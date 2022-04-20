@@ -45,6 +45,17 @@ export class UsersService {
         return userWire;
     }
 
+    async getUserRecord(id: string) {
+        const userDB = await this.usersRepository.findByPk<User>(id);
+        if (!userDB) {
+            throw new HttpException(
+                'User with given id not found',
+                HttpStatus.NOT_FOUND,
+            );
+        }
+        return userDB;
+    }
+
     async getUserByEmail(email: string):Promise<User> {
         const userDB = await this.usersRepository.findOne<User>({
             where: { email },
@@ -58,6 +69,7 @@ export class UsersService {
             user.firstName = createUserDto.firstName;
             user.lastName = createUserDto.lastName;
             user.role = createUserDto.role;
+            user.balance = 120;
         //@TODO: refactor to seperate util
         try{
             const salt = await genSalt(10);

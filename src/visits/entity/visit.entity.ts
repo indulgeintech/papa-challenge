@@ -2,21 +2,17 @@ import {
   Table,
   Column,
   Model,
-  Unique,
-  IsEmail,
   DataType,
   CreatedAt,
   UpdatedAt,
-  BelongsTo,
   HasMany,
-  BelongsToMany,
   Min,
   ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript';
 import { User } from '../../users/user.entity';
 import { VisitStatus } from '../dtos/visit.dto';
 import { Task } from './task.entity';
-import { Transaction } from './transaction.entity';
 
 
 @Table({
@@ -30,18 +26,10 @@ export class Visit extends Model<Visit> {
   })
   id: string;
 
-  @ForeignKey(() => Team)
-  @Column
-  teamId: number
+  @Column({ field: 'minutes',  type: DataType.INTEGER })
+  minutes: number;
 
-  @BelongsTo(() => Team)
-  team: Team
-
-  @Column({ field: 'minutes',  type: DataType.DECIMAL, })
-  @Min(30)
-  minutes: string;
-
-  @Column({ field: 'created_at', type: DataType.DATE })
+  @Column({ field: 'date', type: DataType.DATE })
   date: Date;
 
   @CreatedAt
@@ -57,4 +45,14 @@ export class Visit extends Model<Visit> {
 
   @HasMany(() => Task)
   tasks: Task[];
+
+  @ForeignKey(() => User)
+  @Column({
+      type: DataType.UUID,
+      field: 'user_id',
+  })
+  userId: string;
+
+  @BelongsTo(() => User)
+  member: User;
 }

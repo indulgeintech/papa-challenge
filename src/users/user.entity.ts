@@ -7,7 +7,7 @@ import {
   DataType,
   CreatedAt,
   UpdatedAt,
-  BelongsToMany,
+  HasMany,
 } from 'sequelize-typescript';
 import { Visit, Transaction } from '../visits/entity/';
 import { Role } from './dtos/user.dto';
@@ -22,6 +22,9 @@ export class User extends Model<User> {
     primaryKey: true,
   })
   id: string;
+
+  @Column({ field: 'balance'})
+  balance: number;
 
   @Unique
   @IsEmail
@@ -46,5 +49,10 @@ export class User extends Model<User> {
   updatedAt: Date;
 
   @Column({ type: DataType.ENUM(Role.member, Role.pal) })
-  role: Role
+  role: Role;
+
+
+
+  @HasMany(() => Visit)
+    posts: Visit[];
 }
