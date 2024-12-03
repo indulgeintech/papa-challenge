@@ -1,52 +1,70 @@
-<h1>Frank's Papa Challenge Submission</h1>
+Here’s the revised and polished version of your submission:
+
+---
+
+# Frank's Papa Challenge Submission
 
 ## Description
-### Problem statement
-<a few paragraphs describing the problem>
-"Home Visit Service" is an application needing to offer funcationality for user's (member's and pals) to create and fufill visits respectively. These home visits are requested by member a pal then fufills 
-these visits this changes the user's balance which are measured in minutes.
 
-<a few paragraphs describing how you solved it–focus on the whys here>
-The solution was created by creating a few key modules users, auth and visits 
-this follows practices of keeping the app in
+### Problem Statement
+The **"Home Visit Service"** application is designed to facilitate functionality for users—referred to as *members* and *pals*—to create and fulfill home visit requests, respectively. Members initiate visit requests, and pals fulfill these requests, impacting the user's balance, which is measured in minutes. 
 
-- the use of PostgresSQL a highly scalable featue rich SQL RDBMS 
-- the use of tranasactions for rolling back in case database errors to rollback account changes
-- NestJs a mature web framework that's typescript first
-- Swagger for creating robust api specs
+The challenge involves implementing a system that handles these interactions efficiently and reliably.
 
-Due to time contraints I fell short on testing which I generally would have done at the e2e and unit 
-level.
+### Solution Overview
+The solution was built by creating a few core modules: **Users**, **Auth**, and **Visits**. These modules adhere to software development best practices to ensure scalability and maintainability.
 
-## Video Attached of API
+Key highlights of the approach include:
+
+- Leveraging **PostgreSQL**, a highly scalable and feature-rich SQL RDBMS.
+- Employing **transactions** to ensure consistency by rolling back changes in case of database errors.
+- Utilizing **NestJS**, a mature, TypeScript-first web framework, for robust server-side development.
+- Generating **Swagger** API specifications for detailed and developer-friendly documentation.
+
+While the implementation is functional, time constraints limited the scope for testing, which I would typically implement at both unit and end-to-end (e2e) levels for comprehensive coverage.
+
+---
+
+## Video Demo
 [HomeVisits.mov](./HomeVisits.mov)
 
+---
+
 ## Prerequisites
+Ensure the following tools are installed on your system:
 -   [Node.js](https://nodejs.org/) 
 -   [npm](https://www.npmjs.com/)
--   [yarn](https://classic.yarnpkg.com/lang/en/docs/install/)
--   [postgres](https://www.postgresql.org/)
+-   [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/)
+-   [PostgreSQL](https://www.postgresql.org/)
 
-### Recommended Install Steps
-```bash 
+### Recommended Installation Steps
+```bash
 $ brew install node
 $ npm install --global yarn
 $ brew install postgresql
 ```
-## Installation
 
+---
+
+## Installation
+Install the dependencies by running:
 ```bash
 $ npm install
 ```
-## Pre-Running Steps
-change [dev confgi](src/config/configs/config.dev.ts) to point to your postgres
+
+---
+
+## Pre-Running Configuration
+Update the development configuration file to point to your PostgreSQL instance:
+
+**File:** [src/config/configs/config.dev.ts]  
 ```typescript
 import { Dialect } from 'sequelize/types';
 
 export const config = {
     database: {
         dialect: 'postgres' as Dialect,
-        host:  process.env.DB_HOST || 'localhost',
+        host: process.env.DB_HOST || 'localhost',
         port: Number(process.env.PORT) || 5432,
         username: process.env.DB_USER || 'frankpersonal',
         password: process.env.DB_PASSWORD || '',
@@ -56,71 +74,81 @@ export const config = {
     jwtPrivateKey: 'jwtPrivateKey',
 };
 ```
-## Running the app
 
+---
+
+## Running the Application
 ```bash
-# Install deps
+# Install dependencies
 $ yarn 
 
-# development
+# Start the application in development mode
 $ npm run start
 
-# watch mode
+# Watch mode for development
 $ npm run start:dev
 
-# production mode
+# Production mode
 $ npm run start:prod
 ```
 
-## Test
+---
 
+## Testing
+Run the following commands to execute tests:
 ```bash
-# unit tests
+# Unit tests
 $ npm run test
 
-# e2e tests
+# End-to-end tests
 $ npm run test:e2e
 ```
 
-## Diagrams 
-<img src="docs/erd.jpg"> </img>
+---
 
+## Diagrams
+Entity-Relationship Diagram:  
+![ERD](docs/erd.jpg)
+
+---
 
 ## Project Structure
-I have gone ahead and structured the api by components/services rather than by technical role (controllers, models, routes).
+The API is organized by **components/services** rather than technical roles (e.g., controllers, models, routes). This structure enables future scalability, allowing the API to evolve into a microservices architecture if needed. Inter-service communication is handled through APIs rather than direct file access.
 
-This will allow us to breakout this api in the future if needed and make sure any service to service access is done so via api rather than underlying files.
+Each service is divided into **layers**:
+1. **Web Layer**: Handles HTTP requests and responses.
+2. **Logic Layer**: Contains business logic.
+3. **Data Access Layer**: Manages database interactions.
 
-Each services contains 'layers' - dedicated for the web, logic, and data access layer (MVC and Data Access Object Pattern) to keep SOC and make testing individual layers easier.
+This layered structure ensures a **separation of concerns (SOC)**, simplifies testing, and makes transitions to other frameworks (e.g., Koa, Hapi) straightforward.
 
-I have made sure to keep things like req, res segmented to the controller and routes layer. If one were to move to another web framework (koa, hapi) it would make an easier shift.
+---
 
+## Technologies Used
 
-# Technologies Chosen
+### 1. Node.js with TypeScript
+- Provides type safety and better scalability than plain JavaScript.
+- Ideal for rapid development and growing codebases.
+- While Node.js was chosen due to time constraints, **Elixir/Phoenix** would be considered in a non-time-sensitive scenario for its high concurrency support.
 
-## Node.js (Typescript)
-Quick to get started and grow the codebase typescript sets up type safety quick to get running and allows for the project to scale better than just plain old javascript. I've chosen this tool given time constraints in the interview loop otherwise would have opted for elixir/phoneix to give it a go.
+### 2. PostgreSQL with Sequelize ORM
+- Chosen for its ability to handle relational and transactional data efficiently.
+- Sequelize abstracts database operations, guards against SQL injection, and accelerates CRUD implementation.
+- SQL’s advanced querying capabilities provide a foundation for future analytics and reporting.
 
-## Database Sequelize (MySQL)
-Due to the relational/transactional nature of the data I think SQL is an excellent fit
+---
 
-ORM layer will abstract underlying db, block against SQL injection, and speed up development by giving default CRUD actions
+## API Features
+- **Authentication**: Basic token-based authentication for client identification.
+- **Documentation**: Comprehensive API documentation via **Swagger** and **JSDoc**.
+- **Validation**: Input validation using the `validator` library.
+- **Error Handling**: Middleware for token validation and async error handling.
+- **Testing**: Tests implemented with **Jest** and Swagger-based e2e tests.
 
-Using SQL will allow for advanced reporting queries something missed with no-sql implementations
+---
 
-Schema will change and expand but we can predict relatively well
+This structured approach ensures the application is both functional and scalable, with room for further enhancements.
 
-# API Bells & Whistles
-Auth: Simple auth token to identify clients
+--- 
 
-Documentation: Swagger, JSDOC
-
-Testing: Jest & e2e api test via swagger
-
-Validator: validator library to validate data at run time
-
-Middleware: Token / Async Wrapper for error handling middleware
-
-Documentation
-(Postman & JSDoc): Provides documentation and easy way for developers to start interfacing with application
-
+Let me know if you'd like additional adjustments!
