@@ -1,7 +1,3 @@
-Here’s the revised and polished version of your submission:
-
----
-
 # Frank's Papa Challenge Submission
 
 ## Description
@@ -150,5 +146,3 @@ This layered structure ensures a **separation of concerns (SOC)**, simplifies te
 This structured approach ensures the application is both functional and scalable, with room for further enhancements.
 
 --- 
-
-Let me know if you'd like additional adjustments!
